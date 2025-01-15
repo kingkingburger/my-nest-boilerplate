@@ -1,5 +1,5 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { User, Prisma } from '@prisma/client';
+import { user, Prisma } from '@prisma/client';
 
 import { PrismaService } from '../../config/database/prisma.service';
 import { hashUtil } from '../../util/hash/hash.util';
@@ -12,8 +12,8 @@ export class UserService {
    * 사용자 식별 정보(uniqueInput)를 이용해 사용자 정보를 조회해요.
    */
   async getUserByUnique(
-    uniqueInput: Prisma.UserWhereUniqueInput,
-  ): Promise<User | null> {
+    uniqueInput: Prisma.userWhereUniqueInput,
+  ): Promise<user | null> {
     return this.prisma.user.findUnique({
       where: uniqueInput,
     });
@@ -25,10 +25,10 @@ export class UserService {
   async getUsers(params: {
     skip?: number;
     take?: number;
-    cursor?: Prisma.UserWhereUniqueInput;
-    where?: Prisma.UserWhereInput;
-    orderBy?: Prisma.UserOrderByWithRelationInput;
-  }): Promise<User[]> {
+    cursor?: Prisma.userWhereUniqueInput;
+    where?: Prisma.userWhereInput;
+    orderBy?: Prisma.userOrderByWithRelationInput;
+  }): Promise<user[]> {
     const { skip, take, cursor, where, orderBy } = params;
     return this.prisma.user.findMany({
       skip,
@@ -42,7 +42,7 @@ export class UserService {
   /**
    * 새로운 사용자를 생성해요.
    */
-  async createNewUser(data: Prisma.UserCreateInput): Promise<User> {
+  async createNewUser(data: Prisma.userCreateInput): Promise<user> {
     const hashedPassword = await hashUtil(data.password);
 
     try {
@@ -80,10 +80,10 @@ export class UserService {
   /**
    * 사용자의 정보를 업데이트해요.
    */
-  async updateUserInfo(params: {
-    where: Prisma.UserWhereUniqueInput;
-    data: Prisma.UserUpdateInput;
-  }): Promise<User> {
+  async updateuserInfo(params: {
+    where: Prisma.userWhereUniqueInput;
+    data: Prisma.userUpdateInput;
+  }): Promise<user> {
     const { where, data } = params;
 
     // 만약 비밀번호까지 업데이트해야 한다면, 아래와 같이 해싱 처리 가능
@@ -101,7 +101,7 @@ export class UserService {
   /**
    * 사용자를 삭제해요.
    */
-  async removeUser(uniqueInput: Prisma.UserWhereUniqueInput): Promise<User> {
+  async removeuser(uniqueInput: Prisma.userWhereUniqueInput): Promise<user> {
     return this.prisma.user.delete({
       where: uniqueInput,
     });
