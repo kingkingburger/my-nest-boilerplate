@@ -29,7 +29,6 @@ export class AuthService {
       accessToken: await this.jwtService.signAsync(payload, {
         expiresIn: '1d',
       }),
-      user: user,
     };
   }
   private async verifyPassword(
