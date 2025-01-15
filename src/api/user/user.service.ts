@@ -80,7 +80,7 @@ export class UserService {
   /**
    * 사용자의 정보를 업데이트해요.
    */
-  async updateuserInfo(params: {
+  async updateUserInfo(params: {
     where: Prisma.userWhereUniqueInput;
     data: Prisma.userUpdateInput;
   }): Promise<user> {
@@ -101,7 +101,7 @@ export class UserService {
   /**
    * 사용자를 삭제해요.
    */
-  async removeuser(uniqueInput: Prisma.userWhereUniqueInput): Promise<user> {
+  async removeUser(uniqueInput: Prisma.userWhereUniqueInput): Promise<user> {
     return this.prisma.user.delete({
       where: uniqueInput,
     });
