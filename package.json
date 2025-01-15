@@ -1,8 +1,8 @@
 {
   "name": "my-boilerplate",
   "version": "0.0.1",
-  "description": "",
-  "author": "",
+  "description": "nestjs + prisma를 사용해 서버의 뼈대를 만들기 위한 프로젝트",
+  "author": "WMH",
   "private": true,
   "license": "UNLICENSED",
   "scripts": {
