@@ -36,7 +36,7 @@ DATABASE_URL="postgresql://myuser:mypassword@localhost:5432/mydatabase"
 ```
 
 4. Prisma 스키마 정의
-Prisma 스키마 파일(prisma/schema.prisma)을 열어 데이터베이스 모델을 정의합니다. 예를 들어, 간단한 User 모델을 추가해 보겠습니다.
+Prisma 스키마 파일(prisma/schema.prisma)을 열어 데이터베이스 모델을 정의합니다. 예를 들어, 간단한 user 모델을 추가해 보겠습니다.
 ```sql
 // prisma/schema.prisma
 
@@ -49,11 +49,14 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model User {
-  id        Int      @id @default(autoincrement())
-  email     String   @unique
+model user {
+  id        Int       @id @default(autoincrement())
+  email     String    @unique
+  password  String
   name      String?
-  createdAt DateTime @default(now())
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @default(now())
+  deletedAt DateTime?
 }
 ```
 
