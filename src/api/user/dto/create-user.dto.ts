@@ -1,12 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Prisma } from '@prisma/client';
-import {
-  IsEmail,
-  IsEmpty,
-  IsNotEmpty,
-  IsObject,
-  IsOptional,
-} from 'class-validator';
+import { IsEmail, IsNotEmpty, IsOptional } from 'class-validator';
 
 export class CreateUserDto implements Prisma.userCreateInput {
   @IsNotEmpty()

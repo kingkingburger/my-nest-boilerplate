@@ -2,18 +2,18 @@ import {
   Body,
   Controller,
   Get,
-  HttpException,
-  HttpStatus,
   NotFoundException,
   Param,
   ParseIntPipe,
   Post,
+  Query,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
-import { user } from '@prisma/client';
+import { Prisma, user } from '@prisma/client';
 
 import { CreateUserDto } from './dto/create-user.dto';
 import { UserService } from './user.service';
+import { GetUserListDto } from './dto/get-user.dto';
 
 @ApiTags('User')
 @Controller('/user')
@@ -32,5 +32,24 @@ export class UserController {
       throw new NotFoundException('User not found');
     }
     return user;
+  }
+
+  @Get('/list')
+  async getUserList(@Query() query: GetUserListDto) {
+    // JSON 문자열을 객체로 파싱
+    const whereObj = query.where ? JSON.parse(query.where) : undefined;
+    const orderByObj = query.orderBy ? JSON.parse(query.orderBy) : undefined;
+
+    const users = await this.userService.getUsers({
+      skip: query.skip,
+      take: query.take,
+      where: whereObj as Prisma.userWhereInput,
+      orderBy: orderByObj as Prisma.userOrderByWithRelationInput,
+    });
+
+    if (!users) {
+      throw new NotFoundException('User not found');
+    }
+    return users;
   }
 }

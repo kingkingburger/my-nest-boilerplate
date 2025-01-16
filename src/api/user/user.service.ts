@@ -25,15 +25,13 @@ export class UserService {
   async getUsers(params: {
     skip?: number;
     take?: number;
-    cursor?: Prisma.userWhereUniqueInput;
     where?: Prisma.userWhereInput;
     orderBy?: Prisma.userOrderByWithRelationInput;
   }): Promise<user[]> {
-    const { skip, take, cursor, where, orderBy } = params;
+    const { skip, take, where, orderBy } = params;
     return this.prisma.user.findMany({
       skip,
       take,
-      cursor,
       where,
       orderBy,
     });
