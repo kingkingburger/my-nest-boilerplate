@@ -55,11 +55,11 @@ export class UserController {
     return users;
   }
 
-  @Put('/update')
+  @Put('/update/id/:id')
   async updateUser(
     @Param('id', ParseIntPipe) id: number,
     @Body() userData: UpdateUserDto,
-  ): Promise<user> {
+  ): Promise<Omit<user, 'password' | 'deletedAt'>> {
     return this.userService.updateUserInfo({
       where: { id: id },
       data: userData as Prisma.userUpdateInput,
