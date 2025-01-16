@@ -44,14 +44,11 @@ export class UserService {
    */
   async createNewUser(data: Prisma.userCreateInput): Promise<user> {
     const hashedPassword = await hashUtil(data.password);
-
     try {
       return await this.prisma.user.create({
         data: {
           ...data,
           password: hashedPassword, // 해싱된 패스워드를 저장해요.
-          // salt 필드가 DB에 있다면 함께 저장할 수 있어요.
-          // salt: salt,
         },
       });
     } catch (error) {
@@ -70,10 +67,10 @@ export class UserService {
           );
         }
       }
-      throw new HttpException(
-        '알 수 없는 오류가 발생했습니다.',
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
+      // throw new HttpException(
+      //   '알 수 없는 오류가 발생했습니다.',
+      //   HttpStatus.INTERNAL_SERVER_ERROR,
+      // );
     }
   }
 
