@@ -93,6 +93,34 @@ npx prisma migrate status
 npx prisma migrate reset
 ```
 
+### 폴더설명
+
+🟦 api
+
+- auth
+  - authGuard
+    - header에 authorization의 jwt 토큰이 있어야해요
+    - 사용법: endpoint 에 `@UseGuards(AuthGuard)` 을 넣으면 되요. 그러면 해당 endpoint는 jwt토큰이 필요하게 되요.
+- user
+  - prisma를 활용한 curd작업이 되어있어요.
+
+🟦 util
+- 유저의 password를 hashing 시켜주는 hash 유틸이 있어요. 
+  - 라이브러리의 의존성을 줄이기 위해 nodejs의 crypto기능을 활용했어요(라이브러리가 deprecated된 경험이 있어요)
+
+🟦 config
+
+- database
+  - prisma를 활용하기위해 nest의 module로 넣는 작업이에요
+  - prisma의 query문을 console로 확인하기위해 query가 실행되면 console.log로 확인할 수 있게 했어요.
+- filter
+  - http의 모든요청을 filtering 해요. 에러를 잡고 응답값을 보기 쉽게 만들어줘요.
+  - prisma의 에러를 filtering 해요. validation, request... 에러를 보기 쉽게 만들어주는 곳이에요
+- interceptor
+  - http의 통신을 logging 하기 위함이에요
+- logger
+  - winston 라이브러리를 활용해서 logs 폴더에 7일간 로그파일이 존재하게 되요.
+
 
 ## Description
 

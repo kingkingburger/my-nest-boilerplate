@@ -1,5 +1,3 @@
-// hash.util.ts
-
 import * as crypto from 'crypto';
 
 /**

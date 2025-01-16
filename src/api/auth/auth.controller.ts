@@ -8,9 +8,10 @@ import {
   Request,
   UseGuards,
 } from '@nestjs/common';
+import { ApiSecurity, ApiTags } from '@nestjs/swagger';
+
 import { AuthService } from './auth.service';
 import { AuthGuard } from './auth.guard';
-import { ApiSecurity, ApiTags } from '@nestjs/swagger';
 import { CreateLoginDto } from './dto/login.dto';
 
 @ApiTags('Auth')
