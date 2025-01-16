@@ -1,10 +1,12 @@
 import { NestFactory } from '@nestjs/core';
 import { ValidationPipe } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { WINSTON_MODULE_NEST_PROVIDER } from 'nest-winston';
 
 import { AppModule } from './app.module';
 import { TransformResponseInterceptor } from './config/interceptor/transform-response.interceptor';
 import { HttpExceptionFilter } from './config/filter/http-exception.filter';
+import { PrismaExceptionFilter } from './config/filter/prisma-exception.filter';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -13,7 +15,13 @@ async function bootstrap() {
   app.enableCors();
 
   app.useGlobalInterceptors(new TransformResponseInterceptor()); // 전역 Interceptor 등록
-  app.useGlobalFilters(new HttpExceptionFilter()); // 전역 Filter 등록
+  app.useGlobalFilters(
+    new HttpExceptionFilter(app.get(WINSTON_MODULE_NEST_PROVIDER)),
+  );
+  app.useGlobalFilters(
+    new PrismaExceptionFilter(app.get(WINSTON_MODULE_NEST_PROVIDER)),
+  );
+
   app.useGlobalPipes(
     new ValidationPipe({
       // whitelist: true, // DTO에 정의되지 않은 속성 제거

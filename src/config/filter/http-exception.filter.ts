@@ -1,7 +1,3 @@
-/*
-  ========== 8) 에러 응답 전역 처리 - Exception Filter ==========
-  - throw new HttpException(...) 또는 알 수 없는 예외가 발생했을 때
-*/
 import {
   ArgumentsHost,
   Catch,

@@ -16,7 +16,7 @@ export class GetUserListDto {
   @ApiPropertyOptional({
     type: String,
     description: 'Filter conditions as JSON string',
-    example: '{"name": {"email": "John"}}',
+    example: '{"name": {"contains": "John"}}',
   })
   where?: string; // Prisma.userWhereInput 대신 문자열로 받음
 
