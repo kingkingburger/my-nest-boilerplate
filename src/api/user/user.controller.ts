@@ -4,6 +4,7 @@ import {
   Get,
   NotFoundException,
   Param,
+  ParseIntPipe,
   Post,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
@@ -18,13 +19,13 @@ export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @Post('/create')
-  async signupUser(@Body() @Body() userData: CreateUserDto): Promise<user> {
+  async signupUser(@Body() userData: CreateUserDto): Promise<user> {
     return this.userService.createNewUser(userData);
   }
 
   @Get('/id/:id')
-  async getUser(@Param('id') id: string) {
-    const user = await this.userService.getUserByUnique({ id: +id });
+  async getUser(@Param('id', ParseIntPipe) id: number) {
+    const user = await this.userService.getUserByUnique({ id: id });
     if (!user) {
       throw new NotFoundException('User not found');
     }
