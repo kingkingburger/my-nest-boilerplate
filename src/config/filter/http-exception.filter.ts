@@ -16,6 +16,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse();
     const request = ctx.getRequest();
+
     // class-validator 에러를 우선 처리
     const err = exception.getResponse() as {
       statusCode: number;
@@ -27,9 +28,6 @@ export class HttpExceptionFilter implements ExceptionFilter {
       exception instanceof HttpException
         ? exception.getStatus()
         : HttpStatus.INTERNAL_SERVER_ERROR;
-
-    console.log('err = ', err);
-    console.log('response.message = ', response.message);
 
     const errorResponse = {
       status: status,

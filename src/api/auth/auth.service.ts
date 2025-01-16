@@ -41,7 +41,7 @@ export class AuthService {
     );
     if (!isPasswordMatching) {
       throw new HttpException(
-        '잘못된 인증 정보입니다.',
+        { message: '잘못된 인증 정보입니다.' },
         HttpStatus.BAD_REQUEST,
       );
     }
