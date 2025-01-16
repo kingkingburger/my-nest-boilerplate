@@ -27,6 +27,22 @@ export class UserService {
   }
 
   /**
+   * 사용자 비밀번호 정보를 조회해요.
+   */
+  async getUserCoreInfo(
+    uniqueInput: Prisma.userWhereUniqueInput,
+  ): Promise<Pick<user, 'id' | 'email' | 'password'> | null> {
+    return this.prisma.user.findUnique({
+      where: uniqueInput,
+      select: {
+        id: true,
+        email: true,
+        password: true,
+      },
+    });
+  }
+
+  /**
    * 여러 사용자 정보를 가져와요.
    */
   async getUsers(params: {
@@ -94,12 +110,6 @@ export class UserService {
     data: Prisma.userUpdateInput;
   }): Promise<user> {
     const { where, data } = params;
-
-    // 만약 비밀번호까지 업데이트해야 한다면, 아래와 같이 해싱 처리 가능
-    // if (data.password) {
-    //   const salt = crypto.randomBytes(16).toString('hex');
-    //   data.password = await this.hashPassword(data.password.toString(), salt);
-    // }
 
     return this.prisma.user.update({
       data,

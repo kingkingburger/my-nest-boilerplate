@@ -19,7 +19,7 @@ export class AuthService {
   async signIn(createLoginDto: CreateLoginDto) {
     const { email, password } = createLoginDto;
 
-    const user = await this.userService.getUserByUnique({ email: email });
+    const user = await this.userService.getUserCoreInfo({ email: email });
 
     if (!user || (await this.verifyPassword(password, user.password))) {
       throw new UnauthorizedException();
