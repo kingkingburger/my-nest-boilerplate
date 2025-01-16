@@ -1,10 +1,8 @@
 import { Module } from '@nestjs/common';
-import { APP_FILTER, APP_INTERCEPTOR } from '@nestjs/core';
+import { APP_INTERCEPTOR } from '@nestjs/core';
 
 import { PrismaModule } from './config/database/prisma.module';
 import { LoggerModule } from './config/logger/logger.module';
-import { HttpExceptionFilter } from './config/filter/http-exception.filter';
-import { PrismaExceptionFilter } from './config/filter/prisma-exception.filter';
 import { HttpLoggerInterceptor } from './config/interceptor/http-logger.intercepter';
 
 import { AppController } from './app.controller';
