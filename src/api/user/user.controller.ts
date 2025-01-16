@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   NotFoundException,
   Param,
@@ -16,6 +17,7 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UserService } from './user.service';
 import { GetUserListDto } from './dto/get-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { DeleteUserDto } from './dto/delete-user.dto';
 
 @ApiTags('User')
 @Controller('/user')
@@ -64,5 +66,10 @@ export class UserController {
       where: { id: id },
       data: userData as Prisma.userUpdateInput,
     });
+  }
+
+  @Delete('/user')
+  async deleteUser(@Body() userDeleteData: DeleteUserDto) {
+    return this.userService.removeUser(userDeleteData);
   }
 }

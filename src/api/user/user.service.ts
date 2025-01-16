@@ -3,6 +3,7 @@ import { Prisma, user } from '@prisma/client';
 
 import { PrismaService } from '../../config/database/prisma.service';
 import { hashUtil } from '../../util/hash/hash.util';
+import { DeleteUserDto } from './dto/delete-user.dto';
 
 @Injectable()
 export class UserService {
@@ -127,9 +128,9 @@ export class UserService {
   /**
    * 사용자를 삭제해요.
    */
-  async removeUser(uniqueInput: Prisma.userWhereUniqueInput): Promise<user> {
-    return this.prisma.user.delete({
-      where: uniqueInput,
+  async removeUser(userDeleteData: DeleteUserDto) {
+    return this.prisma.user.deleteMany({
+      where: { id: { in: userDeleteData.ids } },
     });
   }
 }
