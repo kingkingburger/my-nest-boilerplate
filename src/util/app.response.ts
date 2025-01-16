@@ -81,20 +81,6 @@ export interface IsCheckResult {
   isCheck: boolean;
 }
 
-/* 에러 응답 (시퀄라이즈/프리즈마 등) */
-export interface SequelizeErrorResult {
-  name: string;
-  parent?: Error | null;
-  original?: Error | null;
-  sql?: string | null;
-  fields?: { [key: string]: unknown } | null;
-  parameters?: Array<any> | null;
-  constranint?: string | null;
-  table?: string | null;
-  value?: unknown | null;
-  index?: string | null;
-}
-
 /* 최종 응답 형태 */
 export type ResponseJson<T> = {
   status: number;
@@ -110,7 +96,6 @@ export type ResponseJson<T> = {
     | DeletedResult
     | LoggedInResult
     | DownloadResult
-    | SequelizeErrorResult
     | FreeStyleResult
     | UploadedMulterResult<MulterFile>
     | PWMatchResult
