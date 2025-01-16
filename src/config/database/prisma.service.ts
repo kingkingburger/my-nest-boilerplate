@@ -5,7 +5,7 @@ import { Prisma, PrismaClient } from '@prisma/client';
 export class PrismaService extends PrismaClient implements OnModuleInit {
   constructor() {
     super({
-      errorFormat: 'pretty',
+      errorFormat: 'minimal',
       log: [
         // emit을 'event'로 하면, 우리가 직접 $on('query') 이벤트를 통해 로그를 찍어요.
         // 만약 'stdout'으로 해두면 Prisma가 기본적으로 찍는 로그가 나오므로, 필터가 적용되지 않습니다.

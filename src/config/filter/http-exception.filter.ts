@@ -23,7 +23,6 @@ export class HttpExceptionFilter implements ExceptionFilter {
       const resJson = makeResponseError(exception);
       response.status(status).json(resJson);
     } else {
-      // 알 수 없는 에러
       const resJson = makeResponseError(exception);
       response.status(HttpStatus.INTERNAL_SERVER_ERROR).json(resJson);
     }

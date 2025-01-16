@@ -1,6 +1,6 @@
+import { Prisma } from '@prisma/client';
 /*
   ========== 1) 응답 관련 인터페이스들 ==========
-  Express 시절의 resUtil.ts에서 사용하던 타입들을 NestJS에 맞게 약간 수정해서 모아둔 예시예요.
 */
 
 /* insert 응답 */
@@ -26,6 +26,7 @@ export interface SelectedListResult<T> {
 /* selectInfo 응답 */
 export interface SelectedInfoResult {
   id: number;
+
   [key: string]: unknown;
 }
 
@@ -60,6 +61,7 @@ export interface FreeStyleResult {
 export interface MulterFile {
   path: string;
 }
+
 export interface UploadedMulterResult<MulterFile> {
   files: Array<MulterFile>;
 }
@@ -273,7 +275,7 @@ export class ErrorClass implements ResponseJson<unknown> {
 */
 export function makeResponseError(err: unknown): ResponseJson<unknown> {
   // 기본값
-  let resJson = { ...responseCode.ERROR };
+  const resJson = { ...responseCode.ERROR };
 
   if (err instanceof ErrorClass) {
     // 커스텀 에러
@@ -281,14 +283,9 @@ export function makeResponseError(err: unknown): ResponseJson<unknown> {
   }
 
   if (err instanceof Error) {
-    // 기본 Error
     resJson.message = err.message;
     resJson.remark = err.stack;
   }
-
-  // 예: Sequelize나 Prisma 쪽 에러를 구분하고 싶다면 아래 분기 추가
-  // if (some how we detect 'UniqueConstraintError' etc.)
-  //   resJson = { ...responseCode.BAD_REQUEST_DUPLICATED, message: '...' };
 
   return resJson;
 }
