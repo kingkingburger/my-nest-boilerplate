@@ -6,6 +6,7 @@ import {
   Param,
   ParseIntPipe,
   Post,
+  Put,
   Query,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
@@ -14,6 +15,7 @@ import { Prisma, user } from '@prisma/client';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UserService } from './user.service';
 import { GetUserListDto } from './dto/get-user.dto';
+import { UpdateUserDto } from './dto/update-user.dto';
 
 @ApiTags('User')
 @Controller('/user')
@@ -51,5 +53,16 @@ export class UserController {
       throw new NotFoundException('User not found');
     }
     return users;
+  }
+
+  @Put('/update')
+  async updateUser(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() userData: UpdateUserDto,
+  ): Promise<user> {
+    return this.userService.updateUserInfo({
+      where: { id: id },
+      data: userData as Prisma.userUpdateInput,
+    });
   }
 }
