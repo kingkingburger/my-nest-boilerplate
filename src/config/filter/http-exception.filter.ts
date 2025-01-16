@@ -8,10 +8,14 @@ import {
   ExceptionFilter,
   HttpException,
   HttpStatus,
+  Inject,
 } from '@nestjs/common';
+import { WINSTON_MODULE_PROVIDER } from 'nest-winston';
+import { Logger } from 'winston';
 
 @Catch(HttpException)
 export class HttpExceptionFilter implements ExceptionFilter {
+  constructor(@Inject(WINSTON_MODULE_PROVIDER) readonly logger: Logger) {}
   catch(exception: HttpException, host: ArgumentsHost): void {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse();
@@ -38,6 +42,9 @@ export class HttpExceptionFilter implements ExceptionFilter {
       message: err.message ? err.message : response?.message,
       remark: response?.remark,
     };
+
+    // 로그 남기기
+    this.logger.error('HTTP Exception', errorResponse);
 
     response.status(status).json(errorResponse);
   }
