@@ -1,7 +1,6 @@
 /*
   ========== 8) 에러 응답 전역 처리 - Exception Filter ==========
   - throw new HttpException(...) 또는 알 수 없는 예외가 발생했을 때
-  - makeResponseError()로 감싸서 응답
 */
 import {
   ArgumentsHost,
@@ -28,6 +27,9 @@ export class HttpExceptionFilter implements ExceptionFilter {
       exception instanceof HttpException
         ? exception.getStatus()
         : HttpStatus.INTERNAL_SERVER_ERROR;
+
+    console.log('err = ', err);
+    console.log('response.message = ', response.message);
 
     const errorResponse = {
       status: status,

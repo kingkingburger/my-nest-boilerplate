@@ -56,21 +56,21 @@ export class UserService {
         const targetFields = error.meta?.target;
         if (Array.isArray(targetFields) && targetFields.includes('email')) {
           throw new HttpException(
-            '이미 사용 중인 이메일입니다.',
+            { message: '이미 사용 중인 이메일입니다.' },
             HttpStatus.CONFLICT,
           );
         }
         if (Array.isArray(targetFields) && targetFields.includes('name')) {
           throw new HttpException(
-            '이미 사용 중인 이름입니다.',
+            { message: '이미 사용 중인 이름입니다.' },
             HttpStatus.CONFLICT,
           );
         }
       }
-      // throw new HttpException(
-      //   '알 수 없는 오류가 발생했습니다.',
-      //   HttpStatus.INTERNAL_SERVER_ERROR,
-      // );
+      throw new HttpException(
+        { message: '알 수 없는 오류가 발생했습니다.' },
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
   }
 

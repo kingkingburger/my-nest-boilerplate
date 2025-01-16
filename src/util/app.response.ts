@@ -258,19 +258,4 @@ export class ErrorClass implements ResponseJson<unknown> {
 /*
   ========== 6) 에러 응답 생성 함수 ==========
 */
-export function makeResponseError(err: unknown): ResponseJson<unknown> {
-  // 기본값
-  const resJson = { ...responseCode.ERROR };
-
-  if (err instanceof ErrorClass) {
-    // 커스텀 에러
-    return err;
-  }
-
-  if (err instanceof Error) {
-    resJson.message = err.message;
-    resJson.remark = err.stack;
-  }
-
-  return resJson;
-}
+export function makeResponseError(errMessage: unknown) {}
