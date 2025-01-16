@@ -1,5 +1,5 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { user, Prisma } from '@prisma/client';
+import { Prisma, user } from '@prisma/client';
 
 import { PrismaService } from '../../config/database/prisma.service';
 import { hashUtil } from '../../util/hash/hash.util';
@@ -13,9 +13,16 @@ export class UserService {
    */
   async getUserByUnique(
     uniqueInput: Prisma.userWhereUniqueInput,
-  ): Promise<user | null> {
+  ): Promise<Omit<user, 'password' | 'deletedAt'> | null> {
     return this.prisma.user.findUnique({
       where: uniqueInput,
+      select: {
+        id: true,
+        email: true,
+        name: true,
+        createdAt: true,
+        updatedAt: true,
+      },
     });
   }
 
@@ -27,13 +34,20 @@ export class UserService {
     take?: number;
     where?: Prisma.userWhereInput;
     orderBy?: Prisma.userOrderByWithRelationInput;
-  }): Promise<user[]> {
+  }): Promise<Omit<user, 'password' | 'deletedAt'>[] | null> {
     const { skip, take, where, orderBy } = params;
     return this.prisma.user.findMany({
       skip,
       take,
       where,
       orderBy,
+      select: {
+        id: true,
+        email: true,
+        name: true,
+        createdAt: true,
+        updatedAt: true,
+      },
     });
   }
 
