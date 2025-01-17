@@ -47,6 +47,14 @@ async function bootstrap() {
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api-docs', app, document);
 
+  // Swagger JSON 엔드포인트 추가
+  app
+    .getHttpAdapter()
+    .getInstance()
+    .get('/swagger-json', (req, res) => {
+      res.json(document);
+    });
+
   await app.listen(process.env.PORT ?? 3000);
 }
 bootstrap();
