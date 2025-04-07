@@ -1,0 +1,22 @@
+meta {
+  name: UserController_updateUser
+  type: http
+  seq: 4
+}
+
+put {
+  url: {{baseUrl}}/user/update/id/:id
+  body: json
+  auth: none
+}
+
+params:path {
+  id: 
+}
+
+body:json {
+  {
+    "email": "",
+    "name": {}
+  }
+}

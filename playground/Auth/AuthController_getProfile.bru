@@ -1,0 +1,15 @@
+meta {
+  name: AuthController_getProfile
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{baseUrl}}/auth/profile
+  body: none
+  auth: none
+}
+
+headers {
+  authorization: {{apiKey}}
+}
