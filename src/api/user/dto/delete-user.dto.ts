@@ -1,12 +1,15 @@
-import { IsArray, IsNotEmpty } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
+import { IsArray, IsInt } from 'class-validator';
+import { Type } from 'class-transformer';
 
 export class DeleteUserDto {
-  @IsNotEmpty()
-  @IsArray()
   @ApiProperty({
-    example: '[1,2]',
-    description: 'user의 id들',
+    description: '사용자 id 목록',
+    type: [Number],
+    example: [1, 2, 3],
   })
+  @IsArray()
+  @IsInt({ each: true })
+  @Type(() => Number)
   ids: number[];
 }

@@ -31,6 +31,7 @@ export class AuthService {
       }),
     };
   }
+
   private async verifyPassword(
     plainTextPassword: string,
     hashedPassword: string,

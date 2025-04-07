@@ -1,31 +1,17 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Prisma } from '@prisma/client';
-import { IsEmail, IsNotEmpty, IsOptional } from 'class-validator';
+import { IsEmail, IsString, MinLength } from 'class-validator';
 
-export class CreateUserDto implements Prisma.userCreateInput {
-  @IsNotEmpty()
+export class CreateUserDto {
+  @ApiProperty({ example: 'test@example.com' })
   @IsEmail()
-  @ApiProperty({
-    example: 'abc@gmail.com',
-    description: '이메일 주소',
-  })
   email: string;
 
-  @IsNotEmpty()
-  @ApiProperty({
-    example: '1234',
-    description: '비밀번호',
-  })
+  @ApiProperty({ example: 'John Doe' })
+  @IsString()
+  name: string;
+
+  @ApiProperty({ example: 'passw0rd!' })
+  @IsString()
+  @MinLength(6)
   password: string;
-
-  @ApiProperty({
-    example: 'min',
-    description: '이름',
-    nullable: true,
-    required: false,
-  })
-  name?: string | null;
-
-  @IsOptional()
-  deletedAt: Date | string;
 }

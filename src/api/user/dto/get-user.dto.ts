@@ -1,29 +1,36 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
+import { IsOptional, IsString, IsNumberString } from 'class-validator';
 
 export class GetUserListDto {
   @ApiPropertyOptional({
-    type: Number,
-    description: 'Number of records to skip',
+    description: '페이지의 시작 위치(오프셋)',
+    example: '0',
   })
-  skip?: number;
+  @IsOptional()
+  @IsNumberString()
+  skip?: string;
 
   @ApiPropertyOptional({
-    type: Number,
-    description: 'Number of records to take',
+    description: '가져올 개수(리밋)',
+    example: '10',
   })
-  take?: number;
+  @IsOptional()
+  @IsNumberString()
+  take?: string;
 
   @ApiPropertyOptional({
-    type: String,
-    description: 'Filter conditions as JSON string',
-    example: '{"name": {"contains": "John"}}',
+    description: 'Sequelize where 조건(JSON 문자열)',
+    example: '{"name":"John"}',
   })
-  where?: string; // Prisma.userWhereInput 대신 문자열로 받음
+  @IsOptional()
+  @IsString()
+  where?: string;
 
   @ApiPropertyOptional({
-    type: String,
-    description: 'Order conditions as JSON string',
-    example: '{"createdAt": "desc"}',
+    description: 'Sequelize orderBy 조건(JSON 문자열)',
+    example: '[["id","DESC"]]',
   })
-  orderBy?: string; // Prisma.userOrderByWithRelationInput 대신 문자열로 받음
+  @IsOptional()
+  @IsString()
+  orderBy?: string;
 }

@@ -1,46 +1,49 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { Prisma, user } from '@prisma/client';
-
-import { PrismaService } from '../../config/database/prisma.service';
+import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { hashUtil } from '../../util/hash/hash.util';
 import { DeleteUserDto } from './dto/delete-user.dto';
+import { User } from './user.entity';
 
 @Injectable()
 export class UserService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    @Inject('USER_REPOSITORY')
+    private userRepository: typeof User, // Sequelize 모델
+  ) {}
 
   /**
-   * 사용자 식별 정보(uniqueInput)를 이용해 사용자 정보를 조회해요.
+   * 모든 사용자 정보를 가져와요.
    */
-  async getUserByUnique(
-    uniqueInput: Prisma.userWhereUniqueInput,
-  ): Promise<Omit<user, 'password' | 'deletedAt'> | null> {
-    return this.prisma.user.findUnique({
-      where: uniqueInput,
-      select: {
-        id: true,
-        email: true,
-        name: true,
-        createdAt: true,
-        updatedAt: true,
-      },
-    });
+  async findAll(): Promise<User[]> {
+    return this.userRepository.findAll<User>();
   }
 
   /**
-   * 사용자 비밀번호 정보를 조회해요.
+   * 사용자 식별 정보(uniqueInput)를 이용해 사용자 정보를 조회해요.
+   * 예: { id: 10 } 또는 { email: 'someone@example.com' }
    */
-  async getUserCoreInfo(
-    uniqueInput: Prisma.userWhereUniqueInput,
-  ): Promise<Pick<user, 'id' | 'email' | 'password'> | null> {
-    return this.prisma.user.findUnique({
-      where: uniqueInput,
-      select: {
-        id: true,
-        email: true,
-        password: true,
-      },
+  async getUserByUnique(uniqueInput: {
+    id?: number;
+    email?: string;
+  }): Promise<Partial<User> | null> {
+    const user = await this.userRepository.findOne({
+      where: { ...uniqueInput },
+      attributes: ['id', 'email', 'name', 'createdAt', 'updatedAt'],
     });
+    return user ?? null;
+  }
+
+  /**
+   * 사용자 비밀번호 정보를 조회해요 (로그인 등에 활용).
+   */
+  async getUserCoreInfo(uniqueInput: {
+    id?: number;
+    email?: string;
+  }): Promise<Pick<User, 'id' | 'email' | 'password'> | null> {
+    const user = await this.userRepository.findOne({
+      where: { ...uniqueInput },
+      attributes: ['id', 'email', 'password'],
+    });
+    return user ?? null;
   }
 
   /**
@@ -49,55 +52,40 @@ export class UserService {
   async getUsers(params: {
     skip?: number;
     take?: number;
-    where?: Prisma.userWhereInput;
-    orderBy?: Prisma.userOrderByWithRelationInput;
-  }): Promise<Omit<user, 'password' | 'deletedAt'>[] | null> {
+    where?: Record<string, unknown>; // Sequelize의 where 조건
+    orderBy?: Array<[string, string]>; // 예: [['id', 'DESC']] 형태
+  }): Promise<Partial<User>[] | null> {
     const { skip, take, where, orderBy } = params;
-    return this.prisma.user.findMany({
-      skip,
-      take,
+    const users = await this.userRepository.findAll({
       where,
-      orderBy,
-      select: {
-        id: true,
-        email: true,
-        name: true,
-        createdAt: true,
-        updatedAt: true,
-      },
+      offset: skip,
+      limit: take,
+      order: orderBy,
+      attributes: ['id', 'email', 'name', 'createdAt', 'updatedAt'],
     });
+    return users.length ? users : null;
   }
 
   /**
    * 새로운 사용자를 생성해요.
    */
-  async createNewUser(data: Prisma.userCreateInput): Promise<user> {
+  async createNewUser(data: {
+    email: string;
+    name: string;
+    password: string;
+  }): Promise<User> {
     const hashedPassword = await hashUtil(data.password);
     try {
-      return await this.prisma.user.create({
-        data: {
-          ...data,
-          password: hashedPassword, // 해싱된 패스워드를 저장해요.
-        },
+      return await this.userRepository.create({
+        ...data,
+        password: hashedPassword,
       });
     } catch (error) {
-      if (error instanceof Prisma.PrismaClientKnownRequestError) {
-        const targetFields = error.meta?.target;
-        if (Array.isArray(targetFields) && targetFields.includes('email')) {
-          throw new HttpException(
-            { message: '이미 사용 중인 이메일입니다.' },
-            HttpStatus.CONFLICT,
-          );
-        }
-        if (Array.isArray(targetFields) && targetFields.includes('name')) {
-          throw new HttpException(
-            { message: '이미 사용 중인 이름입니다.' },
-            HttpStatus.CONFLICT,
-          );
-        }
-      }
+      // SequelizeUniqueConstraintError 등을 여기서 잡아 에러 처리 가능
+      // 예시:
+      // if (error instanceof UniqueConstraintError) { ... }
       throw new HttpException(
-        { message: '알 수 없는 오류가 발생했습니다.' },
+        { message: '알 수 없는 오류가 발생했어요.' },
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
@@ -107,30 +95,36 @@ export class UserService {
    * 사용자의 정보를 업데이트해요.
    */
   async updateUserInfo(params: {
-    where: Prisma.userWhereUniqueInput;
-    data: Prisma.userUpdateInput;
-  }): Promise<Omit<user, 'password' | 'deletedAt'>> {
+    where: { id?: number; email?: string };
+    data: Partial<User>;
+  }): Promise<Partial<User>> {
     const { where, data } = params;
-
-    return this.prisma.user.update({
-      data,
+    // returning 옵션을 사용하면, 변경된 값을 반환받을 수 있어요.
+    const [count, [updated]] = await this.userRepository.update(data, {
       where,
-      select: {
-        id: true,
-        email: true,
-        name: true,
-        createdAt: true,
-        updatedAt: true,
-      },
+      returning: true,
     });
+    if (count === 0) {
+      throw new HttpException(
+        { message: '존재하지 않는 사용자예요.' },
+        HttpStatus.NOT_FOUND,
+      );
+    }
+    // 비밀번호나 삭제 여부 등 민감한 속성은 제외해서 반환하거나,
+    // attributes를 지정할 수도 있어요.
+    const updatedData = updated.get({ plain: true });
+    delete updatedData.password;
+    delete updatedData.deletedAt;
+    return updatedData;
   }
 
   /**
    * 사용자를 삭제해요.
    */
-  async removeUser(userDeleteData: DeleteUserDto) {
-    return this.prisma.user.deleteMany({
-      where: { id: { in: userDeleteData.ids } },
+  async removeUser(userDeleteData: DeleteUserDto): Promise<number> {
+    // deleteMany 대신 destroy 사용
+    return this.userRepository.destroy({
+      where: { id: userDeleteData.ids },
     });
   }
 }
