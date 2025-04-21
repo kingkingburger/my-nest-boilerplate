@@ -22,13 +22,14 @@ async function bootstrap() {
     new PrismaExceptionFilter(app.get(WINSTON_MODULE_NEST_PROVIDER)),
   );
 
+  // class validator 처리
   app.useGlobalPipes(
     new ValidationPipe({
       // whitelist: true, // DTO에 정의되지 않은 속성 제거
       // forbidNonWhitelisted: true, // 정의되지 않은 속성 포함 시 에러 발생
       transform: true, // 요청 객체를 자동으로 DTO 클래스 인스턴스로 변환
     }),
-  ); // class validator 처리
+  );
 
   // swagger 적용
   const config = new DocumentBuilder()
@@ -51,10 +52,11 @@ async function bootstrap() {
   app
     .getHttpAdapter()
     .getInstance()
-    .get('/swagger-json', (req, res) => {
+    .get('/swagger-json', (_req, res) => {
       res.json(document);
     });
 
   await app.listen(process.env.PORT ?? 3000);
 }
+
 bootstrap();
